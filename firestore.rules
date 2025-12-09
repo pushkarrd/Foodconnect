@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow authenticated users to read all user profiles (donors and receivers)
+    match /donors/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
+    }
+
+    match /receivers/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
+    }
+
+    // Allow authenticated users to create and read donations
+    match /donations/{donationId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null;
+      allow update, delete: if request.auth.uid == resource.data.donorId;
+    }
+
+    // Allow authenticated users to create and read bookings
+    match /bookings/{bookingId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null;
+      allow update, delete: if request.auth.uid == resource.data.receiverId || request.auth.uid == resource.data.donorId;
+    }
+  }
+}
