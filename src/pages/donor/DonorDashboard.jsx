@@ -44,7 +44,6 @@ export default function DonorDashboard() {
     };
 
     fetchData();
-  }, []);Data();
   }, []);
 
   const stats = {
@@ -311,21 +310,6 @@ export default function DonorDashboard() {
                   </div>
                 </div>
               </div>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}                     <div className="text-sm text-gray-600 mb-4">
-                        <p>Pickup: {new Date(order.pickupTime).toLocaleString()}</p>
-                      </div>
-
-                      <button className="btn btn-primary w-full">Mark as Collected</button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </>
           )}
         </div>
