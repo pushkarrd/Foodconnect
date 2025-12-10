@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from '../services/authService';
 import { auth } from '../services/firebase';
-import { FaBars, FaTimes, FaSignOutAlt, FaHome } from 'react-icons/fa';
+import { FaBars, FaTimes, FaSignOutAlt, FaHome, FaUser } from 'react-icons/fa';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const user = auth.currentUser;
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+    });
+    return unsubscribe;
+  }, []);
 
   const handleLogout = async () => {
     await logoutUser();
+    setUser(null);
     navigate('/');
   };
 
@@ -35,7 +43,16 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <span className="text-green-100">{user.displayName || user.email}</span>
+              <div className="flex items-center gap-3">
+                {user.photoURL && (
+                  <img
+                    src={user.photoURL}
+                    alt={user.displayName || 'User'}
+                    className="w-8 h-8 rounded-full border-2 border-white"
+                  />
+                )}
+                <span className="text-green-100">{user.displayName || user.email}</span>
+              </div>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 hover:bg-green-600 px-4 py-2 rounded"
@@ -66,7 +83,16 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
-                  <span className="py-2">{user.displayName || user.email}</span>
+                  <div className="flex items-center gap-2 py-2">
+                    {user.photoURL && (
+                      <img
+                        src={user.photoURL}
+                        alt={user.displayName || 'User'}
+                        className="w-6 h-6 rounded-full border-2 border-white"
+                      />
+                    )}
+                    <span>{user.displayName || user.email}</span>
+                  </div>
                   <button onClick={() => { handleLogout(); setIsOpen(false); }} className="text-left py-2 flex items-center gap-2">
                     <FaSignOutAlt /> Logout
                   </button>

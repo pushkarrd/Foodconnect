@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getNearbyDonations, subscribeToNearbyDonations } from '../../services/donationService';
+import { getUserProfile } from '../../services/authService';
 import { auth } from '../../services/firebase';
-import { FaMapMarkerAlt, FaList, FaMap, FaBox } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaList, FaMap, FaBox, FaUser, FaEnvelope, FaPhone, FaArrowDown } from 'react-icons/fa';
 import DonationCard from '../../components/DonationCard';
 import DonationsMap from '../../components/DonationsMap';
 
 export default function ReceiverDashboard() {
   const [donations, setDonations] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('list');
   const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
@@ -16,6 +18,13 @@ export default function ReceiverDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchProfile = async () => {
+      if (auth.currentUser) {
+        const profile = await getUserProfile(auth.currentUser.uid, 'receiver');
+        setUserProfile(profile);
+      }
+    };
+    fetchProfile();
     getLocation();
   }, []);
 
@@ -121,25 +130,113 @@ export default function ReceiverDashboard() {
           </button>
         </div>
 
-        {/* Content */}
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-            <p className="text-gray-600 mt-4">Finding food near you...</p>
+        {/* Browse Tab Content */}
+        {activeTab === 'browse' && (
+          <>
+            {/* Content */}
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                <p className="text-gray-600 mt-4">Finding food near you...</p>
+              </div>
+            ) : donations.length === 0 ? (
+              <div className="card text-center py-12">
+                <p className="text-gray-600 text-lg mb-4">No food available nearby at the moment</p>
+                <p className="text-gray-500">Check back soon or expand your search radius</p>
+              </div>
+            ) : viewMode === 'list' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {donations.map(donation => (
+                  <DonationCard key={donation.id} donation={donation} userRole="receiver" />
+                ))}
+              </div>
+            ) : (
+              <DonationsMap donations={donations} userLocation={location} />
+            )}
+          </>
+        )}
+
+        {/* Profile Tab Content */}
+        {activeTab === 'profile' && userProfile && (
+          <div className="max-w-2xl">
+            <div className="card">
+              {/* Profile Header */}
+              <div className="flex items-start gap-6 mb-6 pb-6 border-b">
+                <div>
+                  {auth.currentUser?.photoURL ? (
+                    <img
+                      src={auth.currentUser.photoURL}
+                      alt={userProfile.name}
+                      className="w-24 h-24 rounded-full border-4 border-blue-500 object-cover"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-blue-500 flex items-center justify-center text-white text-4xl">
+                      <FaUser />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-3xl font-bold mb-2">{userProfile.name}</h3>
+                  <p className="text-gray-600">👥 Food Receiver</p>
+                </div>
+              </div>
+
+              {/* Contact Information */}
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold mb-4">Contact Information</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-start gap-3">
+                    <FaEnvelope className="text-blue-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-gray-600">Email</p>
+                      <p className="font-semibold">{userProfile.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <FaPhone className="text-blue-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-gray-600">Phone</p>
+                      <p className="font-semibold">{userProfile.phone || 'Not provided'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 md:col-span-2">
+                    <FaMapMarkerAlt className="text-blue-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-gray-600">Address</p>
+                      <p className="font-semibold">{userProfile.address || 'Not provided'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Statistics */}
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold mb-4">Your Activity</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-blue-50 rounded-lg p-4 text-center">
+                    <FaArrowDown className="text-2xl text-blue-600 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600">Total Bookings</p>
+                    <p className="text-2xl font-bold text-blue-600">-</p>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-4 text-center">
+                    <FaUser className="text-2xl text-green-600 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600">Member Since</p>
+                    <p className="text-lg font-bold text-green-600">2025</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 mt-6">
+                <button
+                  onClick={() => navigate('/receiver/dashboard')}
+                  className="btn btn-primary flex-1"
+                >
+                  Back to Dashboard
+                </button>
+              </div>
+            </div>
           </div>
-        ) : donations.length === 0 ? (
-          <div className="card text-center py-12">
-            <p className="text-gray-600 text-lg mb-4">No food available nearby at the moment</p>
-            <p className="text-gray-500">Check back soon or expand your search radius</p>
-          </div>
-        ) : viewMode === 'list' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {donations.map(donation => (
-              <DonationCard key={donation.id} donation={donation} userRole="receiver" />
-            ))}
-          </div>
-        ) : (
-          <DonationsMap donations={donations} userLocation={location} />
         )}
       </div>
     </div>

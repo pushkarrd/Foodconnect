@@ -2,21 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../../services/firebase';
 import { getDonorDonations, getDonorBookedOrders } from '../../services/donationService';
 import { getUserProfile } from '../../services/authService';
-import { FaPlus, FaHistory, FaUser, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
+import { FaPlus, FaHistory, FaUser, FaMapMarkerAlt, FaPhone, FaEnvelope, FaGift } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import DonationCard from '../../components/DonationCard';
 
 export default function DonorDashboard() {
   const [donations, setDonations] = useState([]);
   const [bookedOrders, setBookedOrders] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('donations');
   const navigate = useNavigate();
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (auth.currentUser) {
+          // Fetch user profile
+          const profile = await getUserProfile(auth.currentUser.uid, 'donor');
+          setUserProfile(profile);
+          
           const userDonations = await getDonorDonations(auth.currentUser.uid);
           setDonations(userDonations);
           
@@ -40,6 +44,7 @@ export default function DonorDashboard() {
     };
 
     fetchData();
+  }, []);Data();
   }, []);
 
   const stats = {
@@ -106,11 +111,6 @@ export default function DonorDashboard() {
             className="btn btn-outline flex items-center gap-2"
           >
             <FaUser /> My Profile
-          </button>
-        </div>
-
-        {/* Donations List */}
-        <div>
           {/* Tabs */}
           <div className="flex gap-4 mb-6 border-b">
             <button
@@ -129,6 +129,21 @@ export default function DonorDashboard() {
                 activeTab === 'booked'
                   ? 'text-primary border-b-2 border-primary'
                   : 'text-gray-600 hover:text-primary'
+              }`}
+            >
+              Booked Orders ({stats.booked})
+            </button>
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`pb-3 px-4 font-semibold transition ${
+                activeTab === 'profile'
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-gray-600 hover:text-primary'
+              }`}
+            >
+              My Profile
+            </button>
+          </div>  : 'text-gray-600 hover:text-primary'
               }`}
             >
               Booked Orders ({stats.booked})
@@ -200,18 +215,109 @@ export default function DonorDashboard() {
                               <FaPhone className="text-primary" />
                               <span>{order.receiver.phone}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <FaMapMarkerAlt className="text-primary" />
-                              <span>{order.receiver.address}</span>
-                            </div>
-                            <div className="text-xs text-gray-600 mt-2">
-                              Location: {order.receiver.location?.latitude?.toFixed(4)}, {order.receiver.location?.longitude?.toFixed(4)}
-                            </div>
-                          </div>
+                      <button className="btn btn-primary w-full">Mark as Collected</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* My Profile Tab */}
+          {activeTab === 'profile' && userProfile && (
+            <>
+              <h2 className="text-2xl font-bold mb-6">My Profile</h2>
+              <div className="max-w-2xl">
+                <div className="card">
+                  {/* Profile Header */}
+                  <div className="flex items-start gap-6 mb-6 pb-6 border-b">
+                    <div>
+                      {auth.currentUser?.photoURL ? (
+                        <img
+                          src={auth.currentUser.photoURL}
+                          alt={userProfile.name}
+                          className="w-24 h-24 rounded-full border-4 border-primary object-cover"
+                        />
+                      ) : (
+                        <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-white text-4xl">
+                          <FaUser />
                         </div>
                       )}
+                    </div>
+                    <div className="flex-grow">
+                      <h3 className="text-3xl font-bold mb-2">{userProfile.name}</h3>
+                      <p className="text-gray-600">{userProfile.role === 'donor' ? '🍱 Food Donor' : '👥 Food Receiver'}</p>
+                    </div>
+                  </div>
 
-                      <div className="text-sm text-gray-600 mb-4">
+                  {/* Contact Information */}
+                  <div className="mb-6">
+                    <h4 className="text-lg font-semibold mb-4">Contact Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-start gap-3">
+                        <FaEnvelope className="text-primary mt-1 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm text-gray-600">Email</p>
+                          <p className="font-semibold">{userProfile.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <FaPhone className="text-primary mt-1 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm text-gray-600">Phone</p>
+                          <p className="font-semibold">{userProfile.phone || 'Not provided'}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3 md:col-span-2">
+                        <FaMapMarkerAlt className="text-primary mt-1 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm text-gray-600">Address</p>
+                          <p className="font-semibold">{userProfile.address || 'Not provided'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Statistics */}
+                  <div className="mb-6">
+                    <h4 className="text-lg font-semibold mb-4">Your Statistics</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      <div className="bg-blue-50 rounded-lg p-4 text-center">
+                        <FaGift className="text-2xl text-blue-600 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Total Donations</p>
+                        <p className="text-2xl font-bold text-blue-600">{stats.total}</p>
+                      </div>
+                      <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                        <FaHistory className="text-2xl text-yellow-600 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Pending</p>
+                        <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+                      </div>
+                      <div className="bg-green-50 rounded-lg p-4 text-center">
+                        <FaUser className="text-2xl text-green-600 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Completed</p>
+                        <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4 mt-6">
+                    <button
+                      onClick={() => navigate('/donor/profile')}
+                      className="btn btn-primary flex-1"
+                    >
+                      Edit Profile
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}                     <div className="text-sm text-gray-600 mb-4">
                         <p>Pickup: {new Date(order.pickupTime).toLocaleString()}</p>
                       </div>
 
