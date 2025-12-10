@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getNearbyDonations, subscribeToNearbyDonations } from '../../services/donationService';
 import { auth } from '../../services/firebase';
-import { FaMapMarkerAlt, FaList, FaMap } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaList, FaMap, FaBox } from 'react-icons/fa';
 import DonationCard from '../../components/DonationCard';
 import DonationsMap from '../../components/DonationsMap';
 
@@ -11,6 +12,8 @@ export default function ReceiverDashboard() {
   const [viewMode, setViewMode] = useState('list');
   const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
   const [locationLoading, setLocationLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('browse');
+  const navigate = useNavigate();
 
   useEffect(() => {
     getLocation();
@@ -58,10 +61,39 @@ export default function ReceiverDashboard() {
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-2">Find Food Near You</h1>
+          <h1 className="text-4xl font-bold mb-2">Receiver Dashboard</h1>
           <p className="text-blue-100 flex items-center gap-2">
             <FaMapMarkerAlt /> {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
           </p>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="max-w-7xl mx-auto px-6 py-6 border-b bg-white sticky top-0 z-10">
+        <div className="flex gap-6">
+          <button
+            onClick={() => setActiveTab('browse')}
+            className={`pb-3 px-4 font-semibold transition flex items-center gap-2 ${
+              activeTab === 'browse'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-gray-600 hover:text-primary'
+            }`}
+          >
+            <FaMap /> Browse Food
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('bookings');
+              navigate('/receiver/bookings');
+            }}
+            className={`pb-3 px-4 font-semibold transition flex items-center gap-2 ${
+              activeTab === 'bookings'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-gray-600 hover:text-primary'
+            }`}
+          >
+            <FaBox /> My Bookings
+          </button>
         </div>
       </div>
 

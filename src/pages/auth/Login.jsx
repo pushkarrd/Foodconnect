@@ -7,6 +7,7 @@ export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('donor');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,9 +22,8 @@ export default function Login() {
 
     try {
       const user = await loginUser(formData.email, formData.password);
-      const role = localStorage.getItem('userRole') || 'donor';
-      localStorage.setItem('userRole', role);
-      navigate(`/${role}/dashboard`);
+      localStorage.setItem('userRole', selectedRole);
+      navigate(`/${selectedRole}/dashboard`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -35,10 +35,9 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      const role = localStorage.getItem('userRole') || 'donor';
-      await signInWithGoogle(role);
-      localStorage.setItem('userRole', role);
-      navigate(`/${role}/dashboard`);
+      const user = await signInWithGoogle(selectedRole);
+      localStorage.setItem('userRole', selectedRole);
+      navigate(`/${selectedRole}/dashboard`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -54,12 +53,41 @@ export default function Login() {
         </button>
 
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
         <p className="text-gray-600 mb-6">Login to your FoodConnect account</p>
 
         {error && <div className="bg-red-100 text-red-800 p-3 rounded-lg mb-4">{error}</div>}
 
+        {/* Role Selection */}
+        <div className="mb-6">
+          <p className="text-sm font-semibold text-gray-700 mb-3">Login as:</p>
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => setSelectedRole('donor')}
+              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition ${
+                selectedRole === 'donor'
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              🍱 Donor
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedRole('receiver')}
+              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition ${
+                selectedRole === 'receiver'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              👥 Receiver
+            </button>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
             type="email"
             name="email"
             placeholder="Email Address"

@@ -126,10 +126,25 @@ export default function ReceiverBookings() {
                       </div>
                     </div>
 
-                    {/* Donor Location Tracking */}
+                    {/* Donor Location Tracking with Map */}
                     {booking.donation.location && (
                       <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 mb-6">
                         <h4 className="font-semibold text-lg mb-3">📍 Donor Location (Track Your Order)</h4>
+                        
+                        {/* Embedded Google Map */}
+                        <div className="mb-4 rounded-lg overflow-hidden border border-green-300">
+                          <iframe
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            style={{ border: 0 }}
+                            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyDZncRTKgDVKTjvVNbPpEcUoHyJqHqY6zQ&q=${booking.donation.location.latitude},${booking.donation.location.longitude}`}
+                            allowFullScreen=""
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                          ></iframe>
+                        </div>
+                        
                         <div className="space-y-2">
                           <p className="text-sm"><strong>Latitude:</strong> {booking.donation.location.latitude?.toFixed(6)}</p>
                           <p className="text-sm"><strong>Longitude:</strong> {booking.donation.location.longitude?.toFixed(6)}</p>

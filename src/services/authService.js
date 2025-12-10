@@ -34,7 +34,15 @@ export const registerUser = async (email, password, name, role, phone, address, 
 export const loginUser = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
+    const user = userCredential.user;
+    
+    // Get user's last used role
+    const savedRole = localStorage.getItem(`userRole_${user.email}`);
+    if (savedRole) {
+      localStorage.setItem('userRole', savedRole);
+    }
+    
+    return user;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -42,7 +50,14 @@ export const loginUser = async (email, password) => {
 
 export const logoutUser = async () => {
   try {
+    // Save current role before logging out
+    const currentUser = auth.currentUser;
+    const currentRole = localStorage.getItem('userRole');
+    if (currentUser && currentRole) {
+      localStorage.setItem(`userRole_${currentUser.email}`, currentRole);
+    }
     await signOut(auth);
+    localStorage.removeItem('userRole');
   } catch (error) {
     throw new Error(error.message);
   }
@@ -75,10 +90,18 @@ export const signInWithGoogle = async (role) => {
 
     // Check if user already exists in either collection
     let userDoc = await getDoc(doc(db, 'donors', user.uid));
-    if (userDoc.exists()) return user;
+    const isDonor = userDoc.exists();
+    
+    if (isDonor) {
+      localStorage.setItem(`userRole_${user.email}`, 'donor');
+      return user;
+    }
 
     userDoc = await getDoc(doc(db, 'receivers', user.uid));
-    if (userDoc.exists()) return user;
+    if (userDoc.exists()) {
+      localStorage.setItem(`userRole_${user.email}`, 'receiver');
+      return user;
+    }
 
     // If new user, create profile in appropriate collection
     const collectionName = role === 'donor' ? 'donors' : 'receivers';
@@ -97,7 +120,8 @@ export const signInWithGoogle = async (role) => {
       createdAt: new Date(),
       profileComplete: false
     });
-
+    
+    localStorage.setItem(`userRole_${user.email}`, role);
     return user;
   } catch (error) {
     throw new Error(error.message);
