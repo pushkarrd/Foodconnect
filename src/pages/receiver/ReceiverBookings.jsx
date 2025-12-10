@@ -126,37 +126,41 @@ export default function ReceiverBookings() {
                       </div>
                     </div>
 
-                    {/* Donor Location Tracking with Map */}
+                    {/* Donor Location Tracking with Interactive Map */}
                     {booking.donation.location && (
                       <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 mb-6">
                         <h4 className="font-semibold text-lg mb-3">📍 Donor Location (Track Your Order)</h4>
                         
-                        {/* Embedded Google Map */}
-                        <div className="mb-4 rounded-lg overflow-hidden border border-green-300">
-                          <iframe
-                            width="100%"
-                            height="300"
-                            frameBorder="0"
-                            style={{ border: 0 }}
-                            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyDZncRTKgDVKTjvVNbPpEcUoHyJqHqY6zQ&q=${booking.donation.location.latitude},${booking.donation.location.longitude}`}
-                            allowFullScreen=""
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                          ></iframe>
+                        {/* Clickable Interactive Google Map */}
+                        <div 
+                          onClick={() => window.open(`https://maps.google.com/?q=${booking.donation.location.latitude},${booking.donation.location.longitude}`, '_blank')}
+                          className="mb-4 rounded-lg overflow-hidden border-2 border-green-300 cursor-pointer hover:border-green-500 transition group"
+                          style={{ 
+                            height: '350px',
+                            backgroundImage: `url('https://maps.googleapis.com/maps/api/staticmap?center=${booking.donation.location.latitude},${booking.donation.location.longitude}&zoom=16&size=500x350&markers=color:red%7C${booking.donation.location.latitude},${booking.donation.location.longitude}&key=AIzaSyDZncRTKgDVKTjvVNbPpEcUoHyJqHqY6zQ')`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            position: 'relative'
+                          }}
+                        >
+                          {/* Overlay for interactivity indication */}
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition flex items-center justify-center">
+                            <div className="bg-white px-4 py-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition">
+                              <p className="text-sm font-semibold text-primary">Click to Open Google Maps</p>
+                            </div>
+                          </div>
                         </div>
                         
                         <div className="space-y-2">
                           <p className="text-sm"><strong>Latitude:</strong> {booking.donation.location.latitude?.toFixed(6)}</p>
                           <p className="text-sm"><strong>Longitude:</strong> {booking.donation.location.longitude?.toFixed(6)}</p>
                           <p className="text-sm text-gray-600 mt-3">📌 {booking.donation.address}</p>
-                          <a
-                            href={`https://maps.google.com/?q=${booking.donation.location.latitude},${booking.donation.location.longitude}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-outline btn-sm w-full mt-3"
+                          <button
+                            onClick={() => window.open(`https://maps.google.com/?q=${booking.donation.location.latitude},${booking.donation.location.longitude}`, '_blank')}
+                            className="btn btn-primary btn-sm w-full mt-3 flex items-center justify-center gap-2"
                           >
-                            Open in Google Maps
-                          </a>
+                            🗺️ Open in Google Maps
+                          </button>
                         </div>
                       </div>
                     )}
