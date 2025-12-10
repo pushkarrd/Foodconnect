@@ -53,7 +53,6 @@ export default function Login() {
         </button>
 
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
         <p className="text-gray-600 mb-6">Login to your FoodConnect account</p>
 
         {error && <div className="bg-red-100 text-red-800 p-3 rounded-lg mb-4">{error}</div>}
@@ -88,6 +87,7 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <input
             type="email"
             name="email"
             placeholder="Email Address"
