@@ -110,209 +110,223 @@ export default function DonorDashboard() {
             className="btn btn-outline flex items-center gap-2"
           >
             <FaUser /> My Profile
-          {/* Tabs */}
-          <div className="flex gap-4 mb-6 border-b">
-            <button
-              onClick={() => setActiveTab('donations')}
-              className={`pb-3 px-4 font-semibold transition ${
-                activeTab === 'donations'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-gray-600 hover:text-primary'
-              }`}
-            >
-              Your Donations ({stats.total})
-            </button>
-            <button
-              onClick={() => setActiveTab('booked')}
-              className={`pb-3 px-4 font-semibold transition ${
-                activeTab === 'booked'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-gray-600 hover:text-primary'
-              }`}
-            >
-              Booked Orders ({stats.booked})
-            </button>
-            <button
-              onClick={() => setActiveTab('profile')}
-              className={`pb-3 px-4 font-semibold transition ${
-                activeTab === 'profile'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-gray-600 hover:text-primary'
-              }`}
-            >
-              My Profile
-            </button>
-          </div>  : 'text-gray-600 hover:text-primary'
-              }`}
-            >
-              Booked Orders ({stats.booked})
-            </button>
-          </div>
+          </button>
+        </div>
 
-          {/* Donations Tab */}
-          {activeTab === 'donations' && (
-            <>
-              <h2 className="text-2xl font-bold mb-6">Your Donations</h2>
-              {loading ? (
-                <div className="text-center py-12">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-                  <p className="text-gray-600 mt-4">Loading donations...</p>
-                </div>
-              ) : donations.length === 0 ? (
-                <div className="card text-center py-12">
-                  <p className="text-gray-600 text-lg mb-4">No donations yet</p>
-                  <button onClick={() => navigate('/donor/add-donation')} className="btn btn-primary">
-                    Create Your First Donation
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {donations.map(donation => (
-                    <DonationCard key={donation.id} donation={donation} />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
+        {/* Tabs */}
+        <div className="flex gap-4 mb-6 border-b">
+          <button
+            onClick={() => setActiveTab('donations')}
+            className={`pb-3 px-4 font-semibold transition ${
+              activeTab === 'donations'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-gray-600 hover:text-primary'
+            }`}
+          >
+            Your Donations ({stats.total})
+          </button>
+          <button
+            onClick={() => setActiveTab('booked')}
+            className={`pb-3 px-4 font-semibold transition ${
+              activeTab === 'booked'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-gray-600 hover:text-primary'
+            }`}
+          >
+            Booked Orders ({stats.booked})
+          </button>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`pb-3 px-4 font-semibold transition ${
+              activeTab === 'profile'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-gray-600 hover:text-primary'
+            }`}
+          >
+            My Profile
+          </button>
+        </div>
 
-          {/* Booked Orders Tab */}
-          {activeTab === 'booked' && (
-            <>
-              <h2 className="text-2xl font-bold mb-6">Orders Received</h2>
-              {loading ? (
-                <div className="text-center py-12">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-                  <p className="text-gray-600 mt-4">Loading orders...</p>
-                </div>
-              ) : bookedOrders.length === 0 ? (
-                <div className="card text-center py-12">
-                  <p className="text-gray-600 text-lg">No booked orders yet</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {bookedOrders.map(order => (
-                    <div key={order.id} className="card hover:shadow-lg transition">
-                      <div className="mb-4">
-                        <div className="flex justify-between items-start mb-3">
-                          <div>
-                            <h3 className="text-xl font-bold">{order.foodType}</h3>
-                            <p className="text-sm text-gray-600">Quantity: {order.quantity} servings</p>
-                          </div>
-                          <span className="badge-warning">{order.status}</span>
+        {/* Donations Tab */}
+        {activeTab === 'donations' && (
+          <>
+            <h2 className="text-2xl font-bold mb-6">Your Donations</h2>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                <p className="text-gray-600 mt-4">Loading donations...</p>
+              </div>
+            ) : donations.length === 0 ? (
+              <div className="card text-center py-12">
+                <p className="text-gray-600 text-lg mb-4">No donations yet</p>
+                <button onClick={() => navigate('/donor/add-donation')} className="btn btn-primary">
+                  Create Your First Donation
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {donations.map(donation => (
+                  <DonationCard key={donation.id} donation={donation} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Booked Orders Tab */}
+        {activeTab === 'booked' && (
+          <>
+            <h2 className="text-2xl font-bold mb-6">Orders Received</h2>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                <p className="text-gray-600 mt-4">Loading orders...</p>
+              </div>
+            ) : bookedOrders.length === 0 ? (
+              <div className="card text-center py-12">
+                <p className="text-gray-600 text-lg">No booked orders yet</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {bookedOrders.map(order => (
+                  <div key={order.id} className="card hover:shadow-lg transition">
+                    <div className="mb-4">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="text-xl font-bold">{order.foodType}</h3>
+                          <p className="text-sm text-gray-600">Quantity: {order.quantity} servings</p>
                         </div>
-                        {order.description && (
-                          <p className="text-gray-700 mb-3">{order.description}</p>
-                        )}
+                        <span className="badge-warning">{order.status}</span>
                       </div>
-
-                      {/* Receiver Info */}
-                      {order.receiver && (
-                        <div className="bg-blue-50 rounded-lg p-4 mb-4">
-                          <h4 className="font-semibold text-lg mb-2">{order.receiver.name}</h4>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-center gap-2">
-                              <FaPhone className="text-primary" />
-                              <span>{order.receiver.phone}</span>
-                            </div>
-                      <button className="btn btn-primary w-full">Mark as Collected</button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-
-          {/* My Profile Tab */}
-          {activeTab === 'profile' && userProfile && (
-            <>
-              <h2 className="text-2xl font-bold mb-6">My Profile</h2>
-              <div className="max-w-2xl">
-                <div className="card">
-                  {/* Profile Header */}
-                  <div className="flex items-start gap-6 mb-6 pb-6 border-b">
-                    <div>
-                      {auth.currentUser?.photoURL ? (
-                        <img
-                          src={auth.currentUser.photoURL}
-                          alt={userProfile.name}
-                          className="w-24 h-24 rounded-full border-4 border-primary object-cover"
-                        />
-                      ) : (
-                        <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-white text-4xl">
-                          <FaUser />
-                        </div>
+                      {order.description && (
+                        <p className="text-gray-700 mb-3">{order.description}</p>
                       )}
                     </div>
-                    <div className="flex-grow">
-                      <h3 className="text-3xl font-bold mb-2">{userProfile.name}</h3>
-                      <p className="text-gray-600">{userProfile.role === 'donor' ? '🍱 Food Donor' : '👥 Food Receiver'}</p>
-                    </div>
-                  </div>
 
-                  {/* Contact Information */}
-                  <div className="mb-6">
-                    <h4 className="text-lg font-semibold mb-4">Contact Information</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex items-start gap-3">
-                        <FaEnvelope className="text-primary mt-1 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm text-gray-600">Email</p>
-                          <p className="font-semibold">{userProfile.email}</p>
+                    {/* Receiver Info */}
+                    {order.receiver && (
+                      <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                        <h4 className="font-semibold text-lg mb-2">{order.receiver.name}</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            <FaPhone className="text-primary" />
+                            <span>{order.receiver.phone}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <FaMapMarkerAlt className="text-primary" />
+                            <span>{order.receiver.address || 'Address not provided'}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <FaEnvelope className="text-primary" />
+                            <span>{order.receiver.email}</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <FaPhone className="text-primary mt-1 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm text-gray-600">Phone</p>
-                          <p className="font-semibold">{userProfile.phone || 'Not provided'}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3 md:col-span-2">
-                        <FaMapMarkerAlt className="text-primary mt-1 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm text-gray-600">Address</p>
-                          <p className="font-semibold">{userProfile.address || 'Not provided'}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    )}
 
-                  {/* Statistics */}
-                  <div className="mb-6">
-                    <h4 className="text-lg font-semibold mb-4">Your Statistics</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      <div className="bg-blue-50 rounded-lg p-4 text-center">
-                        <FaGift className="text-2xl text-blue-600 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Total Donations</p>
-                        <p className="text-2xl font-bold text-blue-600">{stats.total}</p>
-                      </div>
-                      <div className="bg-yellow-50 rounded-lg p-4 text-center">
-                        <FaHistory className="text-2xl text-yellow-600 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Pending</p>
-                        <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
-                      </div>
-                      <div className="bg-green-50 rounded-lg p-4 text-center">
-                        <FaUser className="text-2xl text-green-600 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Completed</p>
-                        <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
-                      </div>
+                    <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
+                      <span>Pickup Time: {order.pickupTime || 'Not set'}</span>
+                      <span>Booked on: {order.bookedAt ? new Date(order.bookedAt).toLocaleDateString() : 'N/A'}</span>
                     </div>
-                  </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-4 mt-6">
-                    <button
-                      onClick={() => navigate('/donor/profile')}
-                      className="btn btn-primary flex-1"
-                    >
-                      Edit Profile
-                    </button>
+                    <button className="btn btn-primary w-full">Mark as Collected</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* My Profile Tab */}
+        {activeTab === 'profile' && userProfile && (
+          <>
+            <h2 className="text-2xl font-bold mb-6">My Profile</h2>
+            <div className="max-w-2xl">
+              <div className="card">
+                {/* Profile Header */}
+                <div className="flex items-start gap-6 mb-6 pb-6 border-b">
+                  <div>
+                    {auth.currentUser?.photoURL ? (
+                      <img
+                        src={auth.currentUser.photoURL}
+                        alt={userProfile.name}
+                        className="w-24 h-24 rounded-full border-4 border-primary object-cover"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-white text-4xl">
+                        <FaUser />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-3xl font-bold mb-2">{userProfile.name}</h3>
+                    <p className="text-gray-600">{userProfile.role === 'donor' ? '🍱 Food Donor' : '👥 Food Receiver'}</p>
                   </div>
                 </div>
+
+                {/* Contact Information */}
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold mb-4">Contact Information</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-start gap-3">
+                      <FaEnvelope className="text-primary mt-1 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm text-gray-600">Email</p>
+                        <p className="font-semibold">{userProfile.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaPhone className="text-primary mt-1 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm text-gray-600">Phone</p>
+                        <p className="font-semibold">{userProfile.phone || 'Not provided'}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 md:col-span-2">
+                      <FaMapMarkerAlt className="text-primary mt-1 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm text-gray-600">Address</p>
+                        <p className="font-semibold">{userProfile.address || 'Not provided'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Statistics */}
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold mb-4">Your Statistics</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="bg-blue-50 rounded-lg p-4 text-center">
+                      <FaGift className="text-2xl text-blue-600 mx-auto mb-2" />
+                      <p className="text-sm text-gray-600">Total Donations</p>
+                      <p className="text-2xl font-bold text-blue-600">{stats.total}</p>
+                    </div>
+                    <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                      <FaHistory className="text-2xl text-yellow-600 mx-auto mb-2" />
+                      <p className="text-sm text-gray-600">Pending</p>
+                      <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+                    </div>
+                    <div className="bg-green-50 rounded-lg p-4 text-center">
+                      <FaUser className="text-2xl text-green-600 mx-auto mb-2" />
+                      <p className="text-sm text-gray-600">Completed</p>
+                      <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-4 mt-6">
+                  <button
+                    onClick={() => navigate('/donor/profile')}
+                    className="btn btn-primary flex-1"
+                  >
+                    Edit Profile
+                  </button>
+                </div>
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
